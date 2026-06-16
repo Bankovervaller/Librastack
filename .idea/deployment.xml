@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="PublishConfigData" autoUpload="Always" serverName="librastack" confirmBeforeUploading="false">
+    <option name="confirmBeforeUploading" value="false" />
+    <serverData>
+      <paths name="FTPServer">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/program2/mvc/mvc-master" local="$PROJECT_DIR$" web="https://84544.stu.sd-lab.nl/mvc/mvc-master" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="librastack">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/htdocs" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+    </serverData>
+    <option name="myAutoUpload" value="ALWAYS" />
+  </component>
+</project>

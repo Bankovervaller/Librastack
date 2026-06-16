@@ -1,0 +1,32 @@
+/* Base layout */
+body {
+    background-color: #f8f9fa;
+}
+
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+h1, h3, .h4 {
+    color: #333;
+    margin-bottom: 16px;
+}
+
+/* Table & toolbar */
+.table-responsive { margin-top: 12px; }
+.table thead th { vertical-align: middle; }
+
+/* Buttons and groups */
+.btn-group .btn { margin-right: 0; }
+
+/* Forms */
+.form-text { color: #6c757d; }
+
+/* Accessibility focus */
+:focus-visible { outline: 3px solid #0d6efd; outline-offset: 2px; }
+
+/* Remove generic margins to favor layout-specific spacing */
+/* .btn, .button { margin: 5px; } */
