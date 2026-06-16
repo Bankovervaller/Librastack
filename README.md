@@ -11,6 +11,7 @@ The project is intentionally lightweight: there is no Composer setup, framework 
 - CSRF protection for user forms and logout
 - Per-user book ownership checks
 - Book list search, sorting, pagination, and autocomplete
+- Google Books autocomplete on the create and edit book forms
 - Book create, detail, update, delete, and delete confirmation pages
 - Bootstrap-based interface with local custom CSS
 
@@ -74,6 +75,14 @@ try {
     exit();
 }
 ```
+
+Optional Google Books API key:
+
+```php
+define('GOOGLE_BOOKS_API_KEY', 'your_google_books_api_key');
+```
+
+The Google Books search feature uses public volume search. It can work without a key for development, but a key is recommended for production quota and monitoring.
 
 ## Database Setup
 
@@ -160,6 +169,7 @@ Book routes:
 | `index.php?pasaan=123` | GET, POST | Show update form or update a book |
 | `index.php?verwijder=123` | GET, POST | Confirm or delete a book |
 | `index.php?controller=book&action=autocomplete&q=...` | GET | Return JSON autocomplete suggestions |
+| `index.php?controller=book&action=googleBooks&q=...` | GET | Return Google Books JSON suggestions |
 
 ## Security Notes
 

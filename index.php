@@ -19,6 +19,7 @@
 
     require 'inc/config.inc.php';
     require_once 'models/Book.php';
+    require_once 'models/GoogleBooks.php';
     require_once 'controllers/BookController.php';
     // Load user components
     require_once 'models/User.php';
@@ -38,6 +39,10 @@
             $ctr = new BookController();
             if ($action === 'autocomplete') {
                 $ctr->autocomplete();
+                exit;
+            }
+            if ($action === 'googleBooks') {
+                $ctr->googleBooks();
                 exit;
             }
         } elseif ($controller === 'user') {

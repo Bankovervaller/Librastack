@@ -13,62 +13,74 @@
 </div>
 
 <div class="row g-2 mb-3">
-    <div class="col-md-3">
+    <div class="col-md-6">
         <form method="get" action="index.php" class="d-flex gap-2 align-items-end">
             <input type="hidden" name="controller" value="book">
             <input type="hidden" name="action" value="index">
-            <input type="hidden" name="q" value="<?php echo $q ?? ''; ?>">
-            <div class="flex-fill">
-                <label for="sort" class="form-label small">Sorteren</label>
-                <select id="sort" class="form-select" name="sort">
-                    <option value="title" <?php echo ($sort ?? 'title') === 'title' ? 'selected' : ''; ?>>Titel</option>
-                    <option value="author" <?php echo ($sort ?? '') === 'author' ? 'selected' : ''; ?>>Auteur</option>
-                    <option value="isbn" <?php echo ($sort ?? '') === 'isbn' ? 'selected' : ''; ?>>ISBN</option>
-                    <option value="date_added" <?php echo ($sort ?? '') === 'date_added' ? 'selected' : ''; ?>>Datum toegevoegd</option>
-                </select>
-            </div>
-            <div style="max-width: 180px;">
-                <label for="dir" class="form-label small">Richting</label>
-                <select id="dir" class="form-select" name="dir">
-                    <option value="ASC" <?php echo ($dir ?? 'ASC') === 'ASC' ? 'selected' : ''; ?>>Oplopend</option>
-                    <option value="DESC" <?php echo ($dir ?? '') === 'DESC' ? 'selected' : ''; ?>>Aflopend</option>
-                </select>
-            </div>
+            <input type="hidden" name="q" value="<?php echo htmlspecialchars($q ?? ''); ?>">
+            <input type="hidden" name="sort" value="<?php echo htmlspecialchars($sort ?? 'title'); ?>">
+            <input type="hidden" name="dir" value="<?php echo htmlspecialchars($dir ?? 'ASC'); ?>">
             <div style="max-width: 140px;">
                 <label for="limit" class="form-label small">Per pagina</label>
-                <select id="limit" class="form-select" name="limit">
+                <select id="limit" class="form-select" name="limit" onchange="this.form.submit()">
                     <?php foreach ([10,20,50] as $opt): ?>
                         <option value="<?php echo $opt; ?>" <?php echo ((int)($limit ?? 10)) === $opt ? 'selected' : ''; ?>><?php echo $opt; ?></option>
                     <?php endforeach; ?>
                 </select>
             </div>
-            <button class="btn btn-outline-primary" type="submit">Toepassen</button>
+            <noscript><button class="btn btn-outline-primary" type="submit">Toepassen</button></noscript>
         </form>
     </div>
 </div>
 
 <?php if (!empty($boekenArray) && count($boekenArray) > 0): ?>
+    <?php
+        // Helper function for sort links
+        function getSortUrl($column, $currentSort, $currentDir, $q, $limit) {
+            $newDir = ($currentSort === $column && $currentDir === 'ASC') ? 'DESC' : 'ASC';
+            return "index.php?controller=book&action=index&q=" . urlencode($q) . "&sort=$column&dir=$newDir&limit=$limit";
+        }
+        
+        function getSortIcon($column, $currentSort, $currentDir) {
+            if ($currentSort !== $column) return '<i class="bi bi-arrow-down-up text-muted small ms-1"></i>';
+            return $currentDir === 'ASC' 
+                ? '<i class="bi bi-sort-alpha-down text-primary ms-1"></i>' 
+                : '<i class="bi bi-sort-alpha-up-alt text-primary ms-1"></i>';
+        }
+    ?>
     <div class="table-responsive">
-        <table class="table table-striped align-middle">
+        <table class="table table-hover align-middle shadow-sm rounded">
             <thead class="table-dark">
             <tr>
-                <th>Titel</th>
-                <th>Auteur</th>
-                <th>ISBN</th>
-                <th class="text-end">Acties</th>
+                <th scope="col" class="py-3">
+                    <a href="<?php echo getSortUrl('title', $sort ?? 'title', $dir ?? 'ASC', $q ?? '', $limit ?? 10); ?>" class="text-white text-decoration-none d-flex align-items-center">
+                        Titel <?php echo getSortIcon('title', $sort ?? 'title', $dir ?? 'ASC'); ?>
+                    </a>
+                </th>
+                <th scope="col" class="py-3">
+                    <a href="<?php echo getSortUrl('author', $sort ?? 'title', $dir ?? 'ASC', $q ?? '', $limit ?? 10); ?>" class="text-white text-decoration-none d-flex align-items-center">
+                        Auteur <?php echo getSortIcon('author', $sort ?? 'title', $dir ?? 'ASC'); ?>
+                    </a>
+                </th>
+                <th scope="col" class="py-3">
+                    <a href="<?php echo getSortUrl('isbn', $sort ?? 'title', $dir ?? 'ASC', $q ?? '', $limit ?? 10); ?>" class="text-white text-decoration-none d-flex align-items-center">
+                        ISBN <?php echo getSortIcon('isbn', $sort ?? 'title', $dir ?? 'ASC'); ?>
+                    </a>
+                </th>
+                <th scope="col" class="py-3 text-end">Acties</th>
             </tr>
             </thead>
             <tbody>
             <?php foreach ($boekenArray as $boek): ?>
                 <tr>
-                    <td><?php echo htmlspecialchars_decode($boek->title); ?></td>
+                    <td class="fw-bold"><?php echo htmlspecialchars_decode($boek->title); ?></td>
                     <td><?php echo htmlspecialchars_decode($boek->author); ?></td>
-                    <td><?php echo $boek->isbn; ?></td>
+                    <td><code class="small text-secondary"><?php echo $boek->isbn; ?></code></td>
                     <td class="text-end">
-                        <div class="btn-group" role="group" aria-label="Acties">
-                            <a href="?id=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-info" title="Details">Details</a>
-                            <a href="?pasaan=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-warning" title="Pas aan">Pas aan</a>
-                            <a href="?verwijder=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-danger" title="Verwijder">Verwijder</a>
+                        <div class="btn-group shadow-sm" role="group">
+                            <a href="?id=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-info" title="Details"><i class="bi bi-eye"></i></a>
+                            <a href="?pasaan=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-warning" title="Pas aan"><i class="bi bi-pencil"></i></a>
+                            <a href="?verwijder=<?php echo $boek->id; ?>" class="btn btn-sm btn-outline-danger" title="Verwijder"><i class="bi bi-trash"></i></a>
                         </div>
                     </td>
                 </tr>

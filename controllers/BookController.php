@@ -65,6 +65,32 @@ class BookController
         }
     }
 
+    public function googleBooks()
+    {
+        $this->requireAuth();
+
+        $q = isset($_GET['q']) ? trim(substr($_GET['q'], 0, 200)) : '';
+        $type = isset($_GET['type']) ? $_GET['type'] : 'all';
+        $allowedTypes = ['all', 'title', 'author', 'isbn'];
+        if (!in_array($type, $allowedTypes, true)) {
+            $type = 'all';
+        }
+        header('Content-Type: application/json; charset=utf-8');
+        if (strlen($q) < 2) {
+            echo json_encode([]);
+            return;
+        }
+
+        try {
+            echo json_encode(GoogleBooks::search($q, 8, $type));
+        } catch (Exception $e) {
+            echo json_encode([
+                'error' => 'google_books_unavailable',
+                'message' => $e->getMessage(),
+            ]);
+        }
+    }
+
     public function showBook($id)
     {
         if (!is_null($id)) {
@@ -203,4 +229,3 @@ class BookController
         include 'views/updateBookResults.php';
     }
 }
-
